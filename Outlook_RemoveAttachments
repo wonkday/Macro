@@ -1,0 +1,68 @@
+Public Sub RemoveSelectedEmailAttachments()
+  Dim objApp As Outlook.Application
+  Dim aMail As Outlook.MailItem
+  Dim aMeeting As Outlook.MeetingItem
+  Dim oMailAttachments As Outlook.Attachments
+  Dim oMtngAttachments As Outlook.Attachments
+  Dim oSelection As Outlook.Selection
+  Dim i1 As Long
+  Dim iMailCount As Long
+  Dim i2 As Long
+  Dim iMtngCount As Long
+  Dim iSelCnt As Long
+  Dim j As Long
+  'MsgBox ("Running RemoveSelectedEmailAttachments")
+  
+  Set objApp = CreateObject("Outlook.Application")
+  Set oSelection = objApp.ActiveExplorer.Selection
+  'Debug.Print TypeName(oSelection)
+  
+  iSelCnt = oSelection.count
+  If iSelCnt > 0 Then
+    For j = iSelCnt To 1 Step -1
+      If TypeOf oSelection.Item(j) Is MailItem Then
+        'MsgBox ("seleted obj is a mail item")
+        Set aMail = oSelection.Item(j)
+        Set oMailAttachments = aMail.Attachments
+        iMailCount = oMailAttachments.count
+        If iMailCount > 0 Then
+          For i1 = iMailCount To 1 Step -1
+            'If Not oMailAttachments.Item(i).FileName Like "*.msg" Then
+              'MsgBox ("File:" + oMailAttachments.Item(i))
+              oMailAttachments.Item(i1).Delete
+            'End If
+          Next i1
+          aMail.Save
+        End If
+        'Next
+      End If
+      
+      If TypeOf oSelection.Item(j) Is MeetingItem Then
+        Set aMeeting = oSelection.Item(j)
+        Set oMtngAttachments = aMeeting.Attachments
+        iMtngCount = oMtngAttachments.count
+        If iMtngCount > 0 Then
+          For i2 = iMtngCount To 1 Step -1
+            'If Not oMtngAttachments.Item(i).FileName Like "*.msg" Then
+              'MsgBox ("File:" + oMtngAttachments.Item(i))
+              oMtngAttachments.Item(i2).Delete
+            'End If
+          Next i2
+          aMeeting.Save
+        End If
+      End If
+    Next j
+  Else
+    MsgBox ("Email not selected")
+  End If
+  
+  'MsgBox ("Finished RemoveSelectedEmailAttachments!")
+  
+ExitSub:
+  Set oMailAttachments = Nothing
+  Set oMtngAttachments = Nothing
+  Set aMail = Nothing
+  Set aMeeting = Nothing
+  Set oSelection = Nothing
+  Set objApp = Nothing
+End Sub
